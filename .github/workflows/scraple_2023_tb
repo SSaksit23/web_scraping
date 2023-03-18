@@ -1,0 +1,39 @@
+import requests
+import pandas as pd
+from bs4 import BeautifulSoup
+
+# create an empty list to store the data
+data = []
+
+# loop through pages 1 to 4
+for page in range(0, 5):
+    # construct the URL for the current page
+    url = f'https://award.tabelog.com/en/restaurants?page={page}&utf8=%E2%9C%93&genre_id=0&prefecture_id=0'
+    
+    # send a GET request to the URL
+    response = requests.get(url)
+
+    # parse the HTML content using BeautifulSoup
+    soup = BeautifulSoup(response.content, 'html.parser')
+
+    # find the restaurant names on the page
+    detail_title = soup.find_all(class_='award2023-rstlst__rst-name')
+    detail_names = [title.text.strip() for title in detail_title]
+
+    # find the restaurant genres on the page
+    gerne_title = soup.find_all(class_='award2023-rstlst__area-genre')
+    gerne_names = [title.text.strip() for title in gerne_title]
+
+    # combine the restaurant names and genres into a list of tuples
+    page_data = list(zip(detail_names, gerne_names))
+
+    # add the page data to the overall data list
+    data += page_data
+
+# create a pandas dataframe from the data
+df = pd.DataFrame(data, columns=['Name', 'Genre'])
+
+# write the dataframe to a CSV file
+df.to_csv('restaurant_data3.csv', index=False)
+
+print('Data saved to restaurant_data3.csv')

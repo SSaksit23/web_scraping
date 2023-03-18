@@ -1,0 +1,57 @@
+import requests
+import pandas as pd
+from bs4 import BeautifulSoup
+
+# initialize lists to store the extracted information
+aria_labels = []
+locations = []
+cuisines = []
+
+# base URL and page number variable
+base_url = 'https://guide.michelin.com/en/restaurants'
+page_number = 1
+
+while True:
+    # send a GET request to the URL with the current page number
+    url = f'{base_url}/page/{page_number}'
+    response = requests.get(url)
+
+    # parse the HTML content using BeautifulSoup
+    soup = BeautifulSoup(response.content, 'html.parser')
+
+    # find the restaurant listings on the page
+    restaurant_list = soup.find_all('div', class_='card__menu-content')
+
+    # break the loop if no restaurant listings are found
+    if not restaurant_list:
+        break
+
+    # loop through the restaurant listings and extract the data
+    for restaurant in restaurant_list:
+        aria_label = restaurant.find('a')['aria-label']
+        location = restaurant.find('div', class_='card__menu-footer--location flex-fill pl-text').get_text(strip=True)
+        price_cuisine = restaurant.find('div', class_='card__menu-footer--price pl-text').get_text(strip=True)
+        cuisine = price_cuisine.split('·')[-1].strip()
+
+        aria_labels.append(aria_label)
+        locations.append(location)
+        cuisines.append(cuisine)
+
+    # increment the page number
+    page_number += 1
+
+# create a DataFrame with the extracted data
+restaurant_data = pd.DataFrame({
+    'aria_label': aria_labels,
+    'location': locations,
+    'cuisine': cuisines,
+})
+
+# print the DataFrame
+print(restaurant_data)
+
+# save the DataFrame as a CSV file
+restaurant_data.to_csv('world_michelin_restaurant.csv', index=False)
+
+# print the DataFrame
+print(restaurant_data)

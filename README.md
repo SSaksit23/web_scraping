@@ -14,7 +14,7 @@ To use the script, simply run it from the command line and provide the URL of th
 arduino
 Copy code
 python website_info_extractor.py https://www.example.com h1 class=title
-In this example, the script will extract the text inside the <h1> tag with the class title from the website at https://www.example.com and save it to a CSV file in the same directory as the script.
+In this example, the script will extract the text inside the <h1> tag with the class title from the website at https://www.tablelog.com and save it to a CSV file in the same directory as the script.
 
 You can also customize the script to extract different types of information from the website by modifying the HTML tags and attributes in the code. The script includes comments to help you understand how to do this.
 
